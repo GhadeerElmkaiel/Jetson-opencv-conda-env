@@ -1,33 +1,13 @@
 # Jetson-opencv-conda-env
-
-The scripts are based largely on [Jetsonhacks code](https://github.com/jetsonhacks/buildOpenCVXavier), and on [AerialRoboticsGuru post](https://forums.developer.nvidia.com/t/installing-opencv4-on-xavier-solved/65436)
+Pr	
+The scripts are based largely on [This blog](https://spyjetson.blogspot.com/2020/08/jetson-xavier-nx-opencv-44.html)
 
 ## Steps
 
-- ```./buildOpenCV.sh```
-- In the build folder issue the command ```sudo ldconfig```
-- 
+- Run ```./buildOpenCV_4__4.sh (Path to folder to install in)```
+This will install OpenCV 4.4 for the default python (in case of conda it will be for the python in **base** env)
+- After installing Opencv it is possible enable it on other environments just by copying the next files from **Path_to_default_python**/site-packages to **Path_to_default_python**/lib/*python_version*/site-packages
+1- cv2 (*folder*)
+2- opencv_python-4.4.0.46.dist-info (*folder*)
+3- cv2.cpython-36m-aarch64-linux-gnu.so
 
-
-## Side code
-***Cmake code***
-```
-cmake -D CMAKE_BUILD_TYPE=RELEASE \
--D CMAKE_INSTALL_PREFIX=/usr/local \
--D WITH_CUDA=ON \
--D CUDA_ARCH_BIN=7.2 \
--D ENABLE_FAST_MATH=ON \
--D CUDA_FAST_MATH=ON \
--D WITH_CUBLAS=ON \
--D WITH_LIBV4L=ON \
--D WITH_GSTREAMER=ON \
--D WITH_GSTREAMER_0_10=OFF \
--D WITH_QT=ON \
--D WITH_OPENGL=ON \
--D OPENCV_EXTRA_MODULES_PATH=/media/ubuntu/SSD1/opencv-4-4/opencv_contrib-4.4.0/modules \
--D PYTHON_EXECUTABLE=/media/ubuntu/SSD1/archiconda3/envs/ANS-py36/bin/python3.6 \
--D BUILD_EXAMPLES=ON \
--D CUDA_NVCC_FLAGS="--expt-relaxed-constexpr" \
--D WITH_TBB=ON \
-..
-```
