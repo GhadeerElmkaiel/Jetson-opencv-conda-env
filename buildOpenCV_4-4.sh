@@ -1,13 +1,40 @@
-# Used code from https://spyjetson.blogspot.com/2020/08/jetson-xavier-nx-opencv-44.html
+# Used code from multiple sources as (https://spyjetson.blogspot.com/2020/08/jetson-xavier-nx-opencv-44.html) and JetsonHacks code (https://github.com/jetsonhacks/buildOpenCVXavier/blob/master/buildOpenCV.sh) 
+
+PYTHON_DIR="_"
+INSTALL_DIR=$HOME
+
+function usage
+{
+    echo "usage: ./buildOpenCV.sh [[-s sourcedir ] | [-h]]"
+    echo "-p | --pythondir   Directory directory of the python you want to use (exapmle: path_to_your_env/bin/python)"
+    echo "-i | --installdir  Directory in which to install opencv libraries (default /usr/local)"
+    echo "-h | --help  This message"
+}
 
 
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <Install Folder>"
-    exit
+# Iterate through command line inputs
+while [ "$1" != "" ]; do
+    case $1 in
+        -p | --pythondir )      shift
+				PYTHON_DIR=$1
+                                ;;
+        -i | --installdir )     shift
+                                INSTALL_DIR=$1
+                                ;;
+        -h | --help )           usage
+                                exit
+                                ;;
+        * )                     usage
+                                exit 1
+    esac
+    shift
+done
+
+if [ $PYTHON_DIR == "_" ] ; then
+ echo "You need to provide the directory of the Python you want to use"
+ exit
 fi
-folder="$1"
-user="ubuntu"
-passwd="ubuntu"
+
 
 echo "** Remove OpenCV4.1 first"
 sudo sudo apt-get purge *libopencv*
@@ -23,17 +50,35 @@ sudo apt-get install -y curl
 sudo apt-get update
 
 echo "** Download opencv-4.4.0"
-cd $folder
+cd $INSTALL_DIR
 curl -L https://github.com/opencv/opencv/archive/4.4.0.zip -o opencv-4.4.0.zip
 curl -L https://github.com/opencv/opencv_contrib/archive/4.4.0.zip -o opencv_contrib-4.4.0.zip
-unzip opencv-4.4.0.zip 
-unzip opencv_contrib-4.4.0.zip 
+unzip opencv-4.4.0.zip
+sudo rm opencv-4.4.0.zip
+unzip opencv_contrib-4.4.0.zip
+sudo rm opencv_contrib-4.4.0.zip
 cd opencv-4.4.0/
 
 echo "** Building..."
 mkdir release
 cd release/
-cmake -D WITH_CUDA=ON -D ENABLE_PRECOMPILED_HEADERS=OFF  -D CUDA_ARCH_BIN="7.2" -D CUDA_ARCH_PTX="" -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-4.4.0/modules -D WITH_GSTREAMER=ON -D WITH_LIBV4L=ON -D BUILD_opencv_python2=ON -D BUILD_opencv_python3=ON -D BUILD_TESTS=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_EXAMPLES=OFF -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..
+cmake 	-D WITH_CUDA=ON \
+	-D ENABLE_PRECOMPILED_HEADERS=OFF \
+	-D CUDA_ARCH_BIN="7.2" \
+	-D CUDA_ARCH_PTX="" \
+	-D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-4.4.0/modules \
+	-D WITH_GSTREAMER=ON \
+	-D WITH_LIBV4L=ON \
+	-D BUILD_opencv_python2=ON \
+	-D BUILD_opencv_python3=ON \
+	-D BUILD_TESTS=OFF \
+	-D BUILD_PERF_TESTS=OFF \
+	-D BUILD_EXAMPLES=OFF \
+	-D CMAKE_BUILD_TYPE=RELEASE \
+	-D CMAKE_INSTALL_PREFIX=/usr/local \
+	-D PYTHON_EXECUTABLE=$PYTHON_DIR \
+	..
+	
 make -j8
 sudo make install
 

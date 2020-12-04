@@ -1,5 +1,5 @@
 # Jetson-opencv-conda-env
-Pr	
+
 The scripts are based largely on [This blog](https://spyjetson.blogspot.com/2020/08/jetson-xavier-nx-opencv-44.html)
 
 ## Steps
